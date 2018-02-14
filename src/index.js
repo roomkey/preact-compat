@@ -72,7 +72,7 @@ options.vnode = vnode => {
 		vnode.preactCompatUpgraded = true;
 
 		let tag = vnode.nodeName,
-			attrs = vnode.attributes = extend({}, vnode.attributes);
+			attrs = vnode.attributes = vnode.attributes==null ? {} : extend({}, vnode.attributes);
 
 		if (typeof tag==='function') {
 			if (tag[COMPONENT_WRAPPER_KEY]===true || (tag.prototype && 'isReactComponent' in tag.prototype)) {
@@ -424,7 +424,7 @@ function createClass(obj) {
 		cl.defaultProps = obj.defaultProps;
 	}
 	if (obj.getDefaultProps) {
-		cl.defaultProps = obj.getDefaultProps();
+		cl.defaultProps = obj.getDefaultProps.call(cl);
 	}
 
 	F.prototype = Component.prototype;
@@ -591,6 +591,10 @@ PureComponent.prototype.shouldComponentUpdate = function(props, state) {
 	return shallowDiffers(this.props, props) || shallowDiffers(this.state, state);
 };
 
+function unstable_batchedUpdates(callback) {
+	callback();
+}
+
 export {
 	version,
 	DOM,
@@ -607,8 +611,7 @@ export {
 	Component,
 	PureComponent,
 	renderSubtreeIntoContainer as unstable_renderSubtreeIntoContainer,
-	// this is a really old hidden react api, but something out there uses it
-	// https://twitter.com/Joseph_Wynn/status/888046593286574085
+	unstable_batchedUpdates,
 	extend as __spread
 };
 
@@ -628,5 +631,6 @@ export default {
 	Component,
 	PureComponent,
 	unstable_renderSubtreeIntoContainer: renderSubtreeIntoContainer,
+	unstable_batchedUpdates,
 	__spread: extend
 };

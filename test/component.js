@@ -90,8 +90,7 @@ describe('components', () => {
 				{ children }
 			</Foo>
 		), scratch);
-
-		expect(foo).to.exist.and.have.deep.property('props.children').eql(children);
+		expect(foo.props).to.exist.and.have.property('children').eql(children);
 	});
 
 	it('should single out children before componentWillReceiveProps', () => {
@@ -289,6 +288,25 @@ describe('components', () => {
 					a: true,
 					b: true,
 					c: true
+				});
+			});
+
+			it('should work with statics', () => {
+				const Foo = React.createClass({
+					statics: {
+						a: false
+					},
+					getDefaultProps() {
+						return { b: true, c: this.a };
+					},
+					render() {
+						return <div />;
+					}
+				});
+
+				expect(Foo.defaultProps).to.eql({
+					b: true,
+					c: false
 				});
 			});
 
